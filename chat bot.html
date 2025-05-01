@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beteseb Academy Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --color-dark: #1e293b;
+            --color-light: #ffffff;
+            --color-accent: #3b82f6;
+            --color-muted: #6b7280;
+            --color-border: #e5e7eb;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            --chat-bg: #f9f9f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--color-light);
+            color: var(--color-dark);
+            line-height: 1.6;
+            padding: 1rem;
+            /* Reduced padding for better mobile view */
+            position: relative;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            /* Reduced margin */
+        }
+
+        header h1 {
+            font-size: 1.75rem;
+            /* Smaller font for mobile */
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--color-muted);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            /* Smaller font for mobile */
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            /* Smaller minmax for mobile */
+            gap: 1rem;
+            /* Reduced gap */
+            max-width: 90%;
+            /* Adjust max-width for better mobile fit */
+            margin: 0 auto 2rem;
+            /* Reduced margin */
+        }
+
+        .card {
+            background: var(--color-light);
+            border-radius: 0.5rem;
+            /* Smaller border-radius */
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            /* Reduced padding */
+            display: flex;
+            flex-direction: column;
+            /* Stack icon and text on smaller screens */
+            align-items: center;
+            /* Center items */
+            gap: 0.5rem;
+            /* Reduced gap */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            text-align: center;
+            /* Center text */
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card .icon {
+            font-size: 1.5rem;
+            /* Smaller icon size */
+            color: var(--color-accent);
+            margin-bottom: 0.25rem;
+            /* Space between icon and text */
+        }
+
+        .card-content h3 {
+            font-size: 1rem;
+            /* Smaller font size */
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-content p {
+            font-size: 0.85rem;
+            /* Smaller font size */
+            color: var(--color-muted);
+        }
+
+        /* Chat Interface Styles */
+        #chat-container {
+            max-width: 95%;
+            /* Adjust max-width for mobile */
+            margin: 1rem auto;
+            /* Reduced margin */
+            border-radius: 0.75rem;
+            /* Smaller border-radius */
+            box-shadow: var(--shadow);
+            background: var(--chat-bg);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 150px);
+            /* Adjust height to fit screen better */
+        }
+
+        #chatbox {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            scrollbar-width: thin;
+            /* For Firefox */
+            -webkit-overflow-scrolling: touch;
+            /* For smooth scrolling on iOS */
+        }
+
+        #chatbox::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chatbox::-webkit-scrollbar-thumb {
+            background-color: var(--color-muted);
+            border-radius: 3px;
+        }
+
+        .message {
+            margin-bottom: 0.75rem;
+            /* Reduced margin */
+            padding: 0.6rem 1rem;
+            /* Reduced padding */
+            border-radius: 0.75rem;
+            /* Smaller border-radius */
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 0.9rem;
+            /* Smaller font size */
+        }
+
+        .user-message {
+            background: var(--color-accent);
+            color: white;
+            margin-left: auto;
+            border-top-right-radius: 0.25rem;
+        }
+
+        .bot-message {
+            background: #e2e8f0;
+            /* Lighter background */
+            color: var(--color-dark);
+            margin-right: auto;
+            border-top-left-radius: 0.25rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background-color: var(--color-muted);
+            border-radius: 50%;
+            animation: typing 1s infinite alternate;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            to {
+                opacity: 0.5;
+                transform: translateY(-2px);
+            }
+        }
+
+        #message-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            /* Reduced padding */
+            border-top: 1px solid var(--color-border);
+            background: var(--color-light);
+            /* Input background */
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+        }
+
+        .attach-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            color: var(--color-muted);
+        }
+
+        #file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            left: 0;
+            top: 0;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 0.6rem;
+            /* Reduced padding */
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            /* Smaller border-radius */
+            resize: none;
+            font-size: 0.9rem;
+            /* Smaller font size */
+        }
+
+        #send-button {
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            /* Reduced padding */
+            border-radius: 0.5rem;
+            /* Smaller border-radius */
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 0.9rem;
+            /* Smaller font size */
+        }
+
+        #send-button:hover {
+            opacity: 0.9;
+        }
+
+        #footer {
+            text-align: center;
+            color: var(--color-muted);
+            padding: 0.75rem;
+            /* Reduced padding */
+            font-size: 0.8rem;
+            /* Smaller font size */
+        }
+
+        /* Mobile Specific Adjustments */
+        @media (max-width: 600px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 0.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .card .icon {
+                font-size: 1.25rem;
+            }
+
+            .card-content h3 {
+                font-size: 0.9rem;
+            }
+
+            .card-content p {
+                font-size: 0.75rem;
+            }
+
+            #chat-container {
+                margin: 0.5rem auto;
+                border-radius: 0.5rem;
+                height: calc(100vh - 100px);
+            }
+
+            .message {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.8rem;
+                border-radius: 0.5rem;
+            }
+
+            #message-container {
+                padding: 0.5rem;
+                border-bottom-left-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
+            }
+
+            #message-input,
+            #send-button {
+                font-size: 0.8rem;
+                padding: 0.5rem;
+                border-radius: 0.375rem;
+            }
+
+            .attach-icon {
+                padding: 0.375rem;
+            }
+
+            #footer {
+                font-size: 0.7rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Beteseb Academy</h1>
+        <p class="subtitle">Your AI Study Assistant</p>
+    </header>
+
+    <div class="services-grid">
+        <div class="card" data-message="Homework Help & Solutions">
+            <i class="fas fa-book-open icon"></i>
+            <div class="card-content">
+                <h3>Homework Help</h3>
+                <p>Get step-by-step guidance.</p>
+            </div>
+        </div>
+
+        <div class="card" data-message="Essay Writing Assistance">
+            <i class="fas fa-edit icon"></i>
+            <div class="card-content">
+                <h3>Essay Help</h3>
+                <p>Improve your writing skills.</p>
+            </div>
+        </div>
+
+        <div class="card" data-message="Science Project Guidance">
+            <i class="fas fa-flask icon"></i>
+            <div class="card-content">
+                <h3>Science Help</h3>
+                <p>Guidance for your projects.</p>
+            </div>
+        </div>
+        <div class="card" data-message="Math Problem Solver">
+            <i class="fas fa-calculator icon"></i>
+            <div class="card-content">
+                <h3>Math Solver</h3>
+                <p>Solve your math equations.</p>
+            </div>
+        </div>
+        <div class="card" data-message="Literature Analysis">
+            <i class="fas fa-paragraph icon"></i>
+            <div class="card-content">
+                <h3>Literature Help</h3>
+                <p>Analyze texts and themes.</p>
+            </div>
+        </div>
+        <div class="card" data-message="Study Tips & Strategies">
+            <i class="fas fa-lightbulb icon"></i>
+            <div class="card-content">
+                <h3>Study Tips</h3>
+                <p>Learn effective study methods.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-container">
+        <div id="chatbox"></div>
+        <div id="message-container">
+            <div class="attach-icon">
+                <i class="fas fa-paperclip"></i>
+                <input type="file" id="file-input" accept="image/*,text/*">
+            </div>
+            <textarea id="message-input" rows="1" placeholder="Ask Beteseb Academy..."></textarea>
+            <button id="send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="footer">
+        &copy; 2025 Beteseb Academy | May occasionally produce inaccuracies
+    </div>
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', () => {
+            messageInput.style.height = 'auto';
+            messageInput.style.height = messageInput.scrollHeight + 'px';
+        });
+
+        // Send button click
+        sendButton.addEventListener('click', sendMessage);
+
+        // Send on Enter key (without Shift)
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function addMessage(message, isUser = true) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = message;
+            chatbox.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                messageInput.value = '';
+                sendMessageToBot(message);
+            }
+        }
+
+        async function sendMessageToBot(userMessage) {
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message bot-message';
+            typingIndicator.innerHTML = '<div class="typing-dots"><span>.</span><span>.</span><span>.</span></div>';
+            chatbox.appendChild(typingIndicator);
+            scrollToBottom();
+
+            // Groq API Call
+            fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer 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'
+                },
+                body: JSON.stringify({
+                    model: 'llama3-8b-8192',
+                    messages: [
+                        { role: 'system', content: 'You are a helpful AI for evrytimg ' },
+                        { role: 'user', content: userMessage }
+                    ],
+                    temperature: 0.7
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    chatbox.removeChild(typingIndicator);
+                    const botReply = data.choices?.[0]?.message?.content || "Sorry, I couldn't understand that.";
+                    addMessage(botReply, false);
+                })
+                .catch(err => {
+                    chatbox.removeChild(typingIndicator);
+                    console.error(err);
+                    addMessage("Oops! Something went wrong while talking to the AI.", false);
+                });
+
+            // setTimeout(() => {
+            //     chatbox.removeChild(typingIndicator);
+
+            //     let botResponse = getBotResponse(userMessage);
+            //     addMessage(botResponse, false);
+            // }, 1000 + Math.random() * 500); // Simulate varying response times
+        }
+
+
+
+        // Scroll to the bottom of the chatbox
+        function scrollToBottom() {
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Clickable service cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', () => {
+                const preset = card.getAttribute('data-message');
+                addMessage(preset, true);
+                sendMessageToBot(preset);
+            });
+        });
+    </script>
+</body>
+
+</html>
